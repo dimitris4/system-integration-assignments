@@ -1,0 +1,10 @@
+<mydata>
+	<firstName>Dimitrios</firstName>
+	<lastName>Gkiokas</lastName>
+	<studyProgramme>Software Development</studyProgramme>
+	<likesProgramming>true</likesProgramming>
+	<hobbies>
+		<hobby>music</hobby>
+		<hobby>cinema</hobby>
+	</hobbies>
+</mydata>
