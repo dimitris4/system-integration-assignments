@@ -1,16 +1,27 @@
-import { readFileSync } from 'fs';
+import { readFile } from 'fs';
 
-console.log('\n.txt')
-function syncReadFile(filename) {
-    const contents = readFileSync(filename, 'utf-8');
+readFile("../../words.txt", "utf8", function (err, data) {
+    console.log('\n.txt')
+    console.log(data);
+});
 
-    const arr = contents.split(/\r?\n/);
+readFile("../../words.csv", "utf8", function (err, data) {
+    console.log('\n.csv');
+    console.log(data);
+});
 
-    console.log(arr); // 👉️ ['One', 'Two', 'Three', 'Four']
+readFile("../../words.json", "utf8", function (err, data) {
+    console.log('\n.json');
+    console.log(data);
+});
 
-    return arr;
-}
+readFile("../../words.xml", "utf8", function (err, data) {
+    console.log('\n.xml');
+    console.log(data);
+});
 
-syncReadFile('../words.txt');
-
+readFile("../../words.yaml", "utf8", function (err, data) {
+    console.log('\n.yaml');
+    console.log(data);
+});
 
