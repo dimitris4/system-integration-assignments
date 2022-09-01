@@ -8,7 +8,7 @@ authors = ["dimitrios"]
 python = "^3.8"
 uvicorn = "^0.18.3"
 fastapi = "^0.81.0"
-emoji = "^2.0.0"
+autopep8 = "^1.7.0"
 
 [tool.poetry.dev-dependencies]
 

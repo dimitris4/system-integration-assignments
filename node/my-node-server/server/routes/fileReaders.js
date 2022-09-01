@@ -6,8 +6,8 @@ const router = express.Router();
 router.get('/txt', async (req, res, next) => {
   readTxt().then((data) => {
     res.send(data);
-  }).catch(() => {
-    res.send('Error');
+  }).catch((err) => {
+    res.send(err);
   });
 });
 
@@ -15,8 +15,8 @@ router.get('/txt', async (req, res, next) => {
 router.get('/csv', async (req, res, next) => {
   readCsv().then((data) => {
     res.send(data);
-  }).catch(() => {
-    res.send('Error');
+  }).catch((err) => {
+    res.send(err);
   });
 });
 
