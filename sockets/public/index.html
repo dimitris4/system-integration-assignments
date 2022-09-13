@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        /* Create three equal columns that floats next to each other */
+        .column {
+            float: left;
+            width: 33.33%;
+            padding: 10px;
+            height: 300px;
+            /* Should be removed. Only for demonstration */
+        }
+
+        /* Clear floats after the columns */
+        .row:after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+    </style>
+</head>
+
+<body>
+    <h3>Type your name</h3>
+    <input id="inputName" placeholder="Name">
+    <button onclick="joinRequest()">Join</button>
+    <br><br>
+    <text id="errorMessage"></text>
+    <div class="row">
+        <div class="column" style="background-color:'#7CFC00';">
+            <h2>Online</h2>
+            <ul id="online"></ul>
+        </div>
+        <div class="column" style="background-color:'#ffbaba';">
+            <h2>Offline</h2>
+            <ul id="offline"></ul>
+        </div>
+        <div class="column" id="not-registered" style="background-color:'#e5e5e5';">
+            <h2>Not registered</h2>
+            <ul id="not-registered"></ul>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+
+        const text = document.getElementById('errorMessage');
+
+        const joinRequest = () => {
+            text.innerText = '';
+            const name = document.getElementById('inputName').value;
+            socket.emit('joinRequest', { name, room: 'SW2022' });
+        }
+
+        socket.on('error', (errorMessage) => {
+            text.innerText = errorMessage;
+        })
+
+        socket.on('roomData', (roomData) => {
+            document.querySelectorAll('li').forEach(e => e.remove());
+            roomData.users.map((user) => {
+                const node = document.createElement('li');
+                node.appendChild(document.createTextNode(user.name));
+                if (user.socketId) {
+                    document.getElementById('online').appendChild(node);
+                } else if (user.registered) {
+                    document.getElementById('offline').appendChild(node);
+                } else {
+                    document.getElementById('not-registered').appendChild(node);
+                }
+            });
+        })
+    </script>
+</body>
+
+</html>

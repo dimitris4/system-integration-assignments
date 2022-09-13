@@ -18,7 +18,7 @@ var debug = (0, _debug["default"])('my-node-server:server');
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || '3002');
+var port = normalizePort(process.env.PORT || '3003');
 
 _app["default"].set('port', port);
 /**

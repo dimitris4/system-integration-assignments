@@ -1,13 +1,35 @@
 <html>
 
 <head>
-  <title>Express</title>
+  <title>Server-sent events</title>
   <link rel="stylesheet" href="/stylesheets/style.css">
 </head>
 
 <body>
-  <h1>Express</h1>
-  <p>Welcome to Express</p>
+  <h1>Server-sent events</h1>
+  <div id="server-status"></div>
+  <div id="server-sent_messages"></div>
+  <script>
+    const eventSource = new EventSource('/synchronizeTime');
+
+    eventSource.addEventListener("message", () => {
+      const serverSentMessages = document.getElementById('server-sent_messages');
+      serverSentMessages.innerText = event.data;
+    })
+
+    eventSource.addEventListener("open", (event) => {
+      if (eventSource.readyState === EventSource.CLOSED) {
+        document.getElementById("server-status").innerText = "Disconnected";
+      } else if (eventSource.readyState === EventSource.OPEN) {
+        document.getElementById("server-status").innerText = "Connecting";
+      }
+    })
+    // eventSource.onmessage((event) => {
+    //   console.log(event);
+    //   const serverStatus = document.getElementById('server-sent_messages');
+    //   serverStatus.innerText = event.data;
+    // })
+  </script>
 </body>
 
 </html>
