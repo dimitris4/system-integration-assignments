@@ -5,12 +5,29 @@ import http from 'http';
 const server = http.createServer(app);
 import { Server } from "socket.io";
 const io = new Server(server);
-import { getUsersInRoom, removeUser, addUser, markUserAsDisconnected } from "./users.js";
+import { getUsersInRoom, removeUser, addUser, markUserAsDisconnected, addUserToDatabase, getUser } from "./users.js";
 
 app.use(express.static('public'));
 
+app.use(express.json());
+
 app.get('/', (req, res) => {
     res.sendFile('index.html');
+})
+
+app.post('/invite', (req, res) => {
+    const userCreated = addUserToDatabase(req.body);
+    console.log('user created = ', userCreated);
+    if (!userCreated) {
+        throw new Error('User already exists!');
+    } else {
+        const user = getUser(req.body.email);
+        res.send({ created: true });
+        io.to(user.room).emit('roomData', {
+            room: user.room,
+            users: getUsersInRoom(user.room)
+        });
+    }
 })
 
 app.use(cors())
@@ -21,40 +38,13 @@ io.on("connection", (socket) => {
         const { error, user } = addUser(name, room, socketId);
         if (error) return socket.emit('error', error);
 
-        // Emit will send message to the user
-        // who had joined
-        // socket.emit('message', { user: 'admin', text:
-        //     `${user.name},
-        //     welcome to room ${user.room}.` });
-
-        // Broadcast will send message to everyone
-        // in the room except the joined user
-        // socket.broadcast.to(user.room)
-        //     .emit('message', { user: "admin",
-        //     text: `${user.name}, has joined` });
-
         socket.join(user.room);
 
         io.to(user.room).emit('roomData', {
             room: user.room,
             users: getUsersInRoom(user.room)
         });
-
-        // callback();
     })
-
-    // socket.on('sendMessage', (message, callback) => {
-
-    //     const user = getUser(socket.id);
-    //     io.to(user.room).emit('message',
-    //         { user: user.name, text: message });
-
-    //     io.to(user.room).emit('roomData', {
-    //         room: user.room,
-    //         users: getUsersInRoom(user.room)
-    //     });
-    //     callback();
-    // })
 
     socket.on('disconnect', () => {
         const user = removeUser(socket.id);

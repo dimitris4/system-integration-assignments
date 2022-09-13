@@ -26,25 +26,51 @@
             display: table;
             clear: both;
         }
+
+        .flex-container {
+            display: flex;
+        }
+
+        .flex-child {
+            width: 150px;
+            margin-right: 10px;
+        }
+
+        .notification {
+            color: red;
+            margin-top:10px;
+        }
     </style>
 </head>
 
 <body>
-    <h3>Type your name</h3>
-    <input id="inputName" placeholder="Name">
-    <button onclick="joinRequest()">Join</button>
+    <h4>Join a room</h4>
+    <div class="flex-container">
+        <input id="inputName" class="flex-child" placeholder="Name">
+        <button class="flex-child" onclick="joinRequest()">Join</button>
+    </div>
+
+    <h4>Send an invitation</h4>
+    <div class="flex-container">
+        <input class="flex-child" id="inviteName" placeholder="Name">
+        <input class="flex-child" id="inviteEmail" placeholder="Email">
+        <button class="flex-child" onclick="sendInvitation()">Send</button>
+    </div>
+    
+    <text id="notification" class="notification"></text>
+
     <br><br>
-    <text id="errorMessage"></text>
+
     <div class="row">
-        <div class="column" style="background-color:'#7CFC00';">
+        <div class="column" style="background-color:#B0FC38;">
             <h2>Online</h2>
             <ul id="online"></ul>
         </div>
-        <div class="column" style="background-color:'#ffbaba';">
+        <div class="column" style="background-color: #FF2400;">
             <h2>Offline</h2>
             <ul id="offline"></ul>
         </div>
-        <div class="column" id="not-registered" style="background-color:'#e5e5e5';">
+        <div class="column" id="not-registered" style="background-color:#D3D3D3;">
             <h2>Not registered</h2>
             <ul id="not-registered"></ul>
         </div>
@@ -54,16 +80,16 @@
     <script>
         const socket = io();
 
-        const text = document.getElementById('errorMessage');
+        let notificationText = document.getElementById('notification');
 
         const joinRequest = () => {
-            text.innerText = '';
+            notificationText.innerText = '';
             const name = document.getElementById('inputName').value;
             socket.emit('joinRequest', { name, room: 'SW2022' });
         }
 
         socket.on('error', (errorMessage) => {
-            text.innerText = errorMessage;
+            notificationText.innerText = errorMessage;
         })
 
         socket.on('roomData', (roomData) => {
@@ -80,6 +106,31 @@
                 }
             });
         })
+
+        const sendInvitation = () => {
+            const name = document.getElementById('inviteName').value;
+            const email = document.getElementById('inviteEmail').value;
+
+            if (!name || !email) {
+                notificationText.innerText = 'Invalid input!'
+                return;
+            }
+
+            fetch('http://localhost:8080/invite', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ name, email }),
+            }).then((response) => {
+                return response.json();
+            }).then((data) => {
+                notificationText.innerText = ''
+            }).catch((error) => {
+                notificationText.innerText = `An error occured.`;
+            });
+        }
+
     </script>
 </body>
 
