@@ -11,6 +11,8 @@ app.use(express.static('public'));
 
 app.use(express.json());
 
+app.use(cors())
+
 app.get('/', (req, res) => {
     res.sendFile('index.html');
 })
@@ -29,8 +31,6 @@ app.post('/invite', (req, res) => {
         });
     }
 })
-
-app.use(cors())
 
 io.on("connection", (socket) => {
     socket.on('joinRequest', ({ name, room }) => {
