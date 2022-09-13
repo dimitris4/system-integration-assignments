@@ -36,8 +36,6 @@ export const markUserAsDisconnected = (socketId) => {
         }
     })
 }
-// export const getUser = (id) => users
-//     .find((user) => user.id === id);
 
 export const getUsersInRoom = (room) => {
     return users.filter((user) => user.room === room);
