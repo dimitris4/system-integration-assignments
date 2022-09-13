@@ -4,8 +4,12 @@ import cookieParser from 'cookie-parser';
 import logger from 'morgan';
 import indexRouter from './routes/index';
 import fileReaderRouter from './routes/fileReaders';
+import swaggerUI from "swagger-ui-express";
+const YAML = require('yamljs');
+const swaggerDocument = YAML.load(path.join(__dirname, '..', 'openapi', 'definitions.yaml'));
 
 const app = express();
+app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));

@@ -2,6 +2,13 @@ import yaml
 import json
 import xml.etree.ElementTree as ET
 from fastapi import FastAPI
+from pydantic import BaseModel
+
+class Item(BaseModel):
+    name: str
+    description: str | None = None
+    price: float
+    tax: float | None = None
 
 app = FastAPI()
 
@@ -54,3 +61,9 @@ def read_root():
 #     reader = csv.reader(csv_file)
 #     for row in reader:
 #         print(row)
+
+# example with request body, query parameter, and path variable
+@app.post("/post-example/{item_id}")
+def _(item: Item, item_id, q: str | None = None):
+    print(f'path variable = {item_id}, query parameter = {q}')
+    return item
