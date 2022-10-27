@@ -1,11 +1,20 @@
 import express from 'express';
-import cors from 'cors';
-const app = express();
 import http from 'http';
-const server = http.createServer(app);
-import { Server } from "socket.io";
-const io = new Server(server);
+import cors from 'cors';
 import { getUsersInRoom, removeUser, addUser, markUserAsDisconnected, addUserToDatabase, getUser } from "./users.js";
+import { Server } from "socket.io";
+
+const app = express();
+
+const server = http.createServer(app);
+
+const io = new Server(server, {
+    perMessageDeflate: false,
+    cors: {
+        origin: '*',
+        methods: ['GET', 'POST'],
+    },
+});
 
 app.use(express.static('public'));
 
@@ -16,7 +25,7 @@ app.use(cors())
 app.get('/', (req, res) => {
     res.sendFile('index.html');
 })
-
+ 
 app.post('/invite', (req, res) => {
     const userCreated = addUserToDatabase(req.body);
     console.log('user created = ', userCreated);
@@ -58,7 +67,8 @@ io.on("connection", (socket) => {
     })
 })
 
-server.listen(8080, () => {
-    console.log('server is running on port 8080');
-})
+const PORT = process.env.PORT || 3000;
 
+server.listen(PORT, () => {
+    console.log(`server listening on port ${PORT}`);
+})
